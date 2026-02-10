@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from myfirstproject.user.models import User
+from backend.user.models import User
 
 def save_users_to_json(users: list[User], file_path: str) -> None:
     data = [u.__dict__ for u in users]

@@ -1,8 +1,8 @@
 import sqlite3
 from fastapi.testclient import TestClient
 
-from myfirstproject.main import app
-from myfirstproject.db import get_db, init_db
+from backend.main import app
+from backend.db import get_db, init_db
 
 client = TestClient(app)
 

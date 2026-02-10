@@ -1,4 +1,4 @@
-from myfirstproject.user import User, is_dev, split_by_dev, sort_by_age_desc
+from backend.user import User, is_dev, split_by_dev, sort_by_age_desc
 
 
 def test_is_dev():
