@@ -1,4 +1,4 @@
-from myfirstproject.user.models import User
+from backend.user.models import User
 
 def is_dev(user: User) -> bool:
     return user.is_dev

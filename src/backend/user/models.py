@@ -13,5 +13,5 @@ class User:
       if not self.name or not self.name.strip():
         raise ValueError("Tên không được để trống")
 
-      if self.age <= 0:
+      if self.age < 0:
         raise ValueError("Tuổi không hợp lệ")

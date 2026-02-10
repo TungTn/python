@@ -1,0 +1,2 @@
+ALTER TABLE users ADD COLUMN password_hash TEXT NULL;
+ALTER TABLE users ADD COLUMN created_at TEXT NULL;
