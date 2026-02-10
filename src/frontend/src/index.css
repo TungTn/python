@@ -1,0 +1,58 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 36 38% 96%;
+    --foreground: 222 33% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 33% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 33% 12%;
+    --primary: 220 50% 20%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 29 33% 90%;
+    --secondary-foreground: 222 33% 12%;
+    --muted: 27 29% 92%;
+    --muted-foreground: 216 12% 38%;
+    --accent: 22 55% 86%;
+    --accent-foreground: 222 33% 12%;
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 26 20% 86%;
+    --input: 26 20% 86%;
+    --ring: 220 50% 20%;
+    --radius: 14px;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "DM Sans", "Segoe UI", sans-serif;
+    color: hsl(var(--foreground));
+    background-color: hsl(var(--background));
+    background-image: radial-gradient(circle at top, rgba(255, 240, 214, 0.7), transparent 55%),
+      radial-gradient(circle at 10% 10%, rgba(255, 223, 180, 0.4), transparent 50%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(245, 238, 226, 0.9));
+    background-attachment: fixed;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: "Playfair Display", "Times New Roman", serif;
+    letter-spacing: -0.02em;
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+}
