@@ -12,7 +12,7 @@ export default function Home() {
     setLoading(true);
     setErr(null);
     api
-      .get("/users?page=1&page_size=5")
+      .get("/auth/me")
       .then((r) => setPayload(r.data))
       .catch((e) => setErr(e?.response?.data?.detail ?? "Failed"))
       .finally(() => setLoading(false));
@@ -40,7 +40,7 @@ export default function Home() {
         <Card className="border-white/60 bg-white/80 shadow-xl shadow-amber-100/50 backdrop-blur">
           <CardHeader>
             <CardTitle>API Snapshot</CardTitle>
-            <CardDescription>Latest response from `/users?page=1&page_size=5`.</CardDescription>
+            <CardDescription>Latest response from `API`.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {err && (
