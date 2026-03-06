@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { api } from "../api/api";
 import { setToken } from "../api/auth";
+import { loginWithPassword } from "../api/keycloak";
+import { api } from "../api/api";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 
-type TokenResponse = { access_token: string; token_type: string };
-
 export default function Register() {
   const nav = useNavigate();
-  const [name, setName] = useState("Tung");
-  const [age, setAge] = useState<number>(32);
+  const [username, setUsername] = useState("tungtn");
+  const [firstName, setFirstName] = useState("Tung");
+  const [lastName, setLastName] = useState("TN");
   const [email, setEmail] = useState("tung@example.com");
   const [password, setPassword] = useState("123456");
   const [error, setError] = useState<string | null>(null);
@@ -20,19 +20,21 @@ export default function Register() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
     setLoading(true);
+    setError(null);
     try {
-      const res = await api.post<TokenResponse>("/auth/register", {
-        name,
-        age,
+      await api.post("/auth/register", {
+        username,
         email,
+        first_name: firstName,
+        last_name: lastName,
         password,
       });
-      setToken(res.data.access_token);
+      const tokenData = await loginWithPassword(username, password);
+      setToken(tokenData.access_token);
       nav("/");
     } catch (err: any) {
-      setError(err?.response?.data?.detail ?? "Register failed");
+      setError(err?.message ?? "Register failed");
     } finally {
       setLoading(false);
     }
@@ -44,44 +46,64 @@ export default function Register() {
         <div className="space-y-2">
           <h1 className="text-4xl font-semibold">Create your account</h1>
           <p className="text-sm text-muted-foreground">
-            Build a profile, explore the API, and unlock your private workspace.
+            Create a Keycloak account to access the API.
           </p>
         </div>
 
         <Card className="border-white/60 bg-white/80 shadow-xl shadow-amber-100/50 backdrop-blur">
           <CardHeader>
             <CardTitle>Register</CardTitle>
-            <CardDescription>Fill in your details to create a new account.</CardDescription>
+            <CardDescription>Account is created in Keycloak.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={onSubmit} className="grid gap-5">
               <div className="grid gap-2">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  autoComplete="username"
+                />
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="age">Age</Label>
+                <Label htmlFor="firstName">First name</Label>
                 <Input
-                  id="age"
-                  value={age}
-                  onChange={(e) => setAge(Number(e.target.value))}
-                  type="number"
+                  id="firstName"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="lastName">Last name</Label>
+                <Input
+                  id="lastName"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
                 />
               </div>
 
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="email"
+                  autoComplete="email"
+                />
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="password">Password (&lt; 20, 1 uppercase, 1 special, 4 lowercase)</Label>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   type="password"
+                  autoComplete="new-password"
                 />
               </div>
 
