@@ -1,41 +1,34 @@
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from jose import jwt, JWTError
-import sqlite3
-from uuid import UUID
-from backend.auth import SECRET_KEY, ALGORITHM
-from backend.db import get_db
+from backend.keycloak import decode_token, extract_roles
 
 security = HTTPBearer()
 
 def get_current_user(
     creds: HTTPAuthorizationCredentials = Depends(security),
-    conn: sqlite3.Connection = Depends(get_db),
 ):
   token = creds.credentials
   try:
-    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    user_id = payload.get("sub")
-    if not user_id:
-      raise HTTPException(status_code=401, detail="Invalid token")
-  except JWTError:
+    payload = decode_token(token)
+  except ValueError:
     raise HTTPException(status_code=401, detail="Invalid token")
 
-  row = conn.execute(
-    """
-    SELECT id, name, email, is_dev
-    FROM users
-    WHERE id = ? AND deleted_at IS NULL
-    """,
-    (user_id,),
-  ).fetchone()
+  subject = payload.get("sub")
+  if not subject:
+    raise HTTPException(status_code=401, detail="Invalid token")
 
-  if not row:
-    raise HTTPException(status_code=404, detail="User not found")
-
+  roles = extract_roles(payload)
   return {
-    "id": row["id"],
-    "name": row["name"],
-    "email": row["email"],
-    "is_dev": bool(row["is_dev"]),
+    "sub": subject,
+    "email": payload.get("email"),
+    "roles": roles,
+    "name": payload.get("name"),
   }
+
+def require_roles(required: set[str]):
+  def _checker(user = Depends(get_current_user)):
+    roles = set(user.get("roles") or [])
+    if not roles.intersection(required):
+      raise HTTPException(status_code=403, detail="Insufficient role")
+    return user
+  return _checker
